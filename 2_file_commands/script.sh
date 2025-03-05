@@ -1,0 +1,1 @@
+ps -A | grep /usr > output.txt
