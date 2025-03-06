@@ -1,6 +1,6 @@
-# Exercises from the Programming Techniques laboratory.
+# Exercises from the Operating System class.
 ## Warning. ⚠️
-This programs were solved for understanding understanding the fundamentals of working with the operating system, files, directors, processes and threads. They have not been verified and reviewed by any one. If you can provide any improvements like logic errors, code mistakes and so on, feel free to contact me or open a pull request by forking this repository.
+This programs were solved for understanding the fundamentals of working with the operating system, files, directors, processes and threads. They have not been verified and reviewed by any one. If you can provide any improvements like logic errors, code mistakes and so on, feel free to contact me or open a pull request by forking this repository.
 
 **I do not guarantee the correctness of the code!** ❌
 
