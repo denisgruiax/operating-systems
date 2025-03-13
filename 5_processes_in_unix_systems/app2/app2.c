@@ -13,8 +13,25 @@ Write a program that creates three processes, as follows:
 #include <stdlib.h>
 #include <fcntl.h>
 
+void check_pipe(int result);
+
 int main(int argc, char *argv[])
 {
-    printf("Test\n");
+    int fd[2];
+
+    check_pipe(pipe(fd));
+
+    close(fd[0]);
+    close(fd[1]);
+
     return EXIT_SUCCESS;
+}
+
+void check_pipe(int result)
+{
+    if (result == -1)
+    {
+        perror("Pipe creation failed.\n");
+        exit(EXIT_FAILURE);
+    }
 }
