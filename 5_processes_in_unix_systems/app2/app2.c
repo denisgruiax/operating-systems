@@ -13,6 +13,7 @@ Write a program that creates three processes, as follows:
 #include <stdlib.h>
 #include <fcntl.h>
 #include <string.h>
+#include <ctype.h>
 
 #define NUMBER_OF_PIPES 3
 #define BUFFER_SIZE 1024
@@ -23,6 +24,7 @@ void check_pipes(int pipes[][2], unsigned size);
 void close_pipes(int pipes[][2], unsigned size);
 void check_process_creation(pid_t id);
 void check_fd(int fd);
+char *filter(char *data, int (*f)(int));
 
 int main(int argc, char *argv[])
 {
@@ -40,7 +42,7 @@ int main(int argc, char *argv[])
         close(pipes[0][1]);
 
         char data_from_parent[MAX_TEXT_SIZE] = {};
-        
+
         while (read(pipes[0][0], data_from_parent, BUFFER_SIZE) > 0)
             ;
         printf("Data from parent: %s\n", data_from_parent);
@@ -111,9 +113,37 @@ void check_process_creation(pid_t id)
 
 void check_fd(int fd)
 {
-    if (fd ==-1)
+    if (fd == -1)
     {
         perror("Failed opening the file.\n");
         exit(EXIT_FAILURE);
     }
+}
+
+char *filter(char *data, int (*f)(int))
+{
+    unsigned size = 0;
+    char *buffer = malloc(1);
+    char *start = buffer;
+
+    while (*data != '\0')
+    {
+        if (f(*data))
+        {
+            char *new_buffer = realloc(start, size + 2);
+
+            if (!new_buffer)
+            {
+                free(start);
+                return NULL;
+            }
+
+            start = new_buffer;
+            start[size++] = *data;
+        }
+
+        data++;
+    }
+
+    return buffer;
 }
