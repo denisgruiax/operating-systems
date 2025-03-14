@@ -40,14 +40,20 @@ int main(int argc, char *argv[])
     if (!child1)
     {
         close(pipes[0][1]);
+        close(pipes[1][0]);
 
         char data_from_parent[MAX_TEXT_SIZE] = {};
 
-        while (read(pipes[0][0], data_from_parent, BUFFER_SIZE) > 0)
-            ;
-        printf("Data from parent: %s\n", data_from_parent);
+        read(pipes[0][0], data_from_parent, MAX_TEXT_SIZE);
 
-        close_pipes(pipes, NUMBER_OF_PIPES);
+        char *data_filtered = filter(data_from_parent, islower);
+        size_t write_buffer = strlen(data_filtered);
+        while (write(pipes[1][1], data_filtered, write_buffer) < write_buffer)
+            ;
+
+            close_pipes(pipes, NUMBER_OF_PIPES);
+
+        free(data_filtered);
     }
     else
     {
@@ -56,21 +62,41 @@ int main(int argc, char *argv[])
 
         if (!child2)
         {
-            /* code */
+            close(pipes[1][1]);
+            close(pipes[2][0]);
+
+            char data_from_child1[MAX_TEXT_SIZE] = {};
+
+            read(pipes[1][0], data_from_child1, MAX_TEXT_SIZE);
+
+            size_t write_buffer = strlen(data_from_child1);
+            while (write(pipes[2][1], data_from_child1, write_buffer) < write_buffer)
+                ;
+
+            close_pipes(pipes, NUMBER_OF_PIPES);
         }
         else
         {
+            close(pipes[0][0]);
+            close(pipes[2][1]);
+
             char data[MAX_TEXT_SIZE] = {};
             int data_fd = open("data.txt", O_RDONLY);
 
+            char data_from_child2[MAX_TEXT_SIZE];
+
             check_fd(data_fd);
 
-            while (read(data_fd, data, BUFFER_SIZE) > 0)
-                ;
+            read(data_fd, data, MAX_TEXT_SIZE);
 
-            int write_buffer = strlen(data);
+            size_t write_buffer = strlen(data);
             while (write(pipes[0][1], data, write_buffer) < write_buffer)
                 ;
+
+            while (read(pipes[2][0], data_from_child2, BUFFER_SIZE) > 0)
+                ;
+
+            printf("Filtered data is:\n%s\n", data_from_child2);
 
             close_pipes(pipes, NUMBER_OF_PIPES);
 
