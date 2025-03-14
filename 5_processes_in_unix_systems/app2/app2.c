@@ -13,16 +13,23 @@ Write a program that creates three processes, as follows:
 #include <stdlib.h>
 #include <fcntl.h>
 
+#define NUMBER_OF_PIPES 3
+#define BUFFER_SIZE 4098
+
 void init_pipes(int pipes[][2], unsigned size);
 void check_pipes(int pipes[][2], unsigned size);
 void close_pipes(int pipes[][2], unsigned size);
+void check_process_creation(pid_t id);
 
 int main(int argc, char *argv[])
 {
-    int pipes[3][2];
+    int pipes[3][2] = {0};
+    int child1 = 0, child2 = 0;
 
-    init_pipes(pipes, 3);
-    check_pipes(pipes, 3);
+    init_pipes(pipes, NUMBER_OF_PIPES);
+    check_pipes(pipes, NUMBER_OF_PIPES);
+    
+    close_pipes(pipes, NUMBER_OF_PIPES);
 
     return EXIT_SUCCESS;
 }
@@ -48,4 +55,12 @@ void close_pipes(int pipes[][2], unsigned size)
 {
     for (size_t i = 0; i < size; i++)
         close(pipes[i][0]), close(pipes[i][0]);
+}
+
+void check_process_creation(pid_t id){
+    if (id == -1)
+    {
+        perror("Failed to create new process with fork.");
+        exit(EXIT_FAILURE);
+    }
 }
