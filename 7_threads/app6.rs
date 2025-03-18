@@ -11,7 +11,40 @@ at which point it will take over their state and terminate the process.
 */
 
 fn main(){
-    println!("Hello world!")
+    let table = Arc::new(Mutex::new(['#', '#', '#', '#', '#']));
+    let mut handles = vec![];
+
+    for id in 1..=5 as u8 {
+        let table = Arc::clone(&table);
+        let character = match_character(id);
+
+        handles.push(thread::spawn(move || {
+            let mut counter = 0;
+
+            for _ in 1..=(id as u64 * 100_000) {
+                let index: usize = rand::random_range(0..5);
+                let mut table = table.lock().unwrap();
+
+                table[index] = character;
+
+                counter += 1;
+            }
+
+            counter
+        }));
+    }
+
+    while !handles.iter().all(|handle| handle.is_finished()) {
+        print_table(&table);
+    }
+
+    handles
+        .into_iter()
+        .map(|h| h.join().unwrap())
+        .collect::<Vec<i32>>()
+        .iter()
+        .enumerate()
+        .for_each(|(id, counter)| println!("Thread {} wrote {} characters", id + 1, counter));
 }
 
 fn print_table(table: &Arc<Mutex<[char; 5]>>) -> () {
