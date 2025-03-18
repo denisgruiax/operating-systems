@@ -10,7 +10,11 @@ as follows: the first thread with the character 'A', the second with 'B' and so 
 at which point it will take over their state and terminate the process.
 */
 
-fn main(){
+use std::sync::Arc;
+use std::sync::Mutex;
+use std::thread;
+
+fn main() {
     let table = Arc::new(Mutex::new(['#', '#', '#', '#', '#']));
     let mut handles = vec![];
 
