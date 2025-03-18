@@ -21,3 +21,14 @@ fn print_table(table: &Arc<Mutex<[char; 5]>>) -> () {
 
     println!();
 }
+
+fn match_character(thread_id: u8) -> char {
+    match thread_id {
+        1 => 'A',
+        2 => 'B',
+        3 => 'C',
+        4 => 'D',
+        5 => 'E',
+        _ => panic!("Wrong id have been given to the function"),
+    }
+}
