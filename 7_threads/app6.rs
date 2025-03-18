@@ -48,9 +48,7 @@ fn main(){
 }
 
 fn print_table(table: &Arc<Mutex<[char; 5]>>) -> () {
-    for c in (*table.lock().unwrap()).iter() {
-        print!("{}", c);
-    }
+    table.lock().unwrap().iter().for_each(|c| print!("{}", c));
 
     println!();
 }
