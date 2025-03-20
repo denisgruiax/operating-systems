@@ -13,7 +13,7 @@ fn handle_client(mut stream: TcpStream) {
 
     stream.read(&mut buffer).iter().for_each(|bytes_size| {
         println!(
-            "Received from {} bytes from the client: {:?}",
+            "Received {} bytes from the client: {:?}",
             bytes_size,
             String::from_utf8_lossy(&buffer)
         );
