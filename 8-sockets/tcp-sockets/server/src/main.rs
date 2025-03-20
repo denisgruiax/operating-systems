@@ -15,8 +15,13 @@ fn handle_client(mut stream: TcpStream) {
         println!(
             "Received {} bytes from the client: {:?}",
             bytes_size,
-            String::from_utf8_lossy(&buffer)
+            String::from_utf8_lossy(&buffer[..*bytes_size])
         );
-        stream.write(b"Message received! :)").unwrap();
+
+        stream.write("Message received!".as_bytes()).unwrap();
     });
 }
+
+/*
+    Server reads full message in one go because TCP buffering holds everything until read() is called.
+*/
