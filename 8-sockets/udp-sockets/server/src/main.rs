@@ -19,6 +19,8 @@ fn main() -> std::io::Result<()> {
             src
         );
 
+        socket.send_to("Hello UDP client!".as_bytes(), src)?;
+
         Ok::<(), std::io::Error>(())
     })?;
 
