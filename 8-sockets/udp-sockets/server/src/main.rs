@@ -1,5 +1,7 @@
 use std::net::UdpSocket;
 
+use rand::Rng;
+
 fn main() -> std::io::Result<()> {
     let mut buffer = [0; 128];
     let socket = UdpSocket::bind("127.0.0.1:8080")?;
@@ -19,7 +21,10 @@ fn main() -> std::io::Result<()> {
             src
         );
 
-        socket.send_to("Hello UDP client!".as_bytes(), src)?;
+        let mut generator = rand::rng();
+        let response = generator.random_range(0..=100);
+
+        socket.send_to(format!("Hello, response is: {}", response).as_bytes(), src)?;
 
         Ok::<(), std::io::Error>(())
     })?;
