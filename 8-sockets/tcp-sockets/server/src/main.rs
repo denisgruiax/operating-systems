@@ -1,6 +1,8 @@
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 
+use rand::Rng;
+
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
     println!("Server running on 127.0.0.1:8080 ⚡️");
@@ -11,15 +13,20 @@ fn main() {
 fn handle_client(mut stream: TcpStream) {
     let mut buffer: [u8; 128] = [0; 128];
 
-    stream.read(&mut buffer).iter().for_each(|bytes_size| {
+    if let Ok(bytes_read) = stream.read(&mut buffer) {
         println!(
             "Received {} bytes from the client: {:?}",
-            bytes_size,
-            String::from_utf8_lossy(&buffer[..*bytes_size])
+            bytes_read,
+            String::from_utf8_lossy(&buffer[..bytes_read])
         );
 
-        stream.write("Message received!".as_bytes()).unwrap();
-    });
+        let mut rng = rand::rng();
+        let response = rng.random_range(0..=100);
+
+        stream
+            .write(format!("The random number is: {}", response).as_bytes())
+            .unwrap();
+    };
 }
 
 /*
