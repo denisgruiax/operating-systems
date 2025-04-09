@@ -7,13 +7,18 @@ use std::{
     time::Duration,
 };
 
+pub mod library;
+use library::ThreadPool;
+
 fn main() -> Result<(), std::io::Error> {
     let listener = TcpListener::bind("127.0.0.1:8080")?;
+    let threadpool = ThreadPool::new(4);
 
     listener
         .incoming()
         .into_iter()
-        .for_each(|stream| handle_connection(stream.unwrap()).unwrap());
+        .take(2)
+        .for_each(|stream| threadpool.execute(|| handle_connection(stream.unwrap()).unwrap()));
 
     Ok(())
 }
