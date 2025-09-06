@@ -358,6 +358,7 @@ name = "my-redis"
 version = "0.1.0"
 dependencies = [
  "mini-redis",
+ "tokio",
 ]
 
 [[package]]
